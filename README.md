@@ -8,6 +8,17 @@ door, and get out before the clock reaches 00:00.
 Zero dependencies, no build step, no image files. Every room, the map of Việt Nam and every
 object are drawn in SVG from code, and the sound is synthesised with WebAudio.
 
+**2.5D rooms.** Each room is a stack of depth layers in real CSS 3D space:
+
+- the view outside the window sits far behind the wall;
+- wall-mounted things sit on the wall;
+- furniture stands in the room;
+- the closest props are softly out of focus.
+
+The camera turns toward the mouse or the phone's tilt, so near furniture slides across the wall
+and the window view lags behind. It glides into the room when you enter and dollies toward an
+object before its puzzle opens. When you escape, the door swings open on its hinge.
+
 ## The rooms
 
 | City | Room | Quests | Clock | Final word |
@@ -31,6 +42,13 @@ Adding a city takes two files, see [docs/06-ADD-A-CITY.md](docs/06-ADD-A-CITY.md
   - Order and match puzzles tell you how many items are already in place ("2/4 đúng").
   - Stars: ★★★ if you escape with half the time left, ★★ with a quarter left, ★ if you just
     make it.
+- **3D camera:**
+  - Parallax from the mouse or the phone's tilt, plus a slow idle sway.
+  - A glide-in when you enter a room, and a dolly toward each object you open.
+  - A warm torchlight that follows the pointer.
+  - A door leaf that really turns on its hinge (the Sài Gòn iron gate folds up instead).
+  - City cards and the map board lean toward the pointer.
+  - Puzzle cards arrive with a 3D tilt, and letter tiles are chunky blocks.
 - **Made to be explored:**
   - Objects glow on hover and sparkle until solved, then show a green tick.
   - "Soi đèn" lights up every object you have not solved yet.
@@ -53,7 +71,7 @@ Adding a city takes two files, see [docs/06-ADD-A-CITY.md](docs/06-ADD-A-CITY.md
 
 ```bash
 npm start    # http://127.0.0.1:5173
-npm test     # 55 tests, under a second, no dependencies
+npm test     # 61 tests, under a second, no dependencies
 ```
 
 ## What the tests prove
@@ -78,8 +96,13 @@ npm test     # 55 tests, under a second, no dependencies
   - Stars and summary totals.
   - Runs are never mutated in place.
 - **Artwork:**
-  - Every room is well-formed SVG with unique, prefixed ids, and every `url(#…)` points to a
-    real gradient.
+  - Every room is four layers (far → front), each scaled so it lines up exactly with the wall
+    at rest.
+  - The window view is painted at least 150 px past the glass, so the camera never shows its
+    edge.
+  - Every room is well-formed with unique, prefixed ids, and every `url(#…)` points to a real
+    gradient.
+  - The door leaf sits exactly over its frame.
   - Exactly one object per quest plus one door, all keyboard-reachable.
   - Every room has its escape scene.
   - Every map pin stands on the mainland, and the islands are offshore.

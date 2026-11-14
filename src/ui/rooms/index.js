@@ -6,7 +6,8 @@ import hcmRoom from "./hcm.js";
 
 export const ROOMS = { hanoi: hanoiRoom, danang: danangRoom, hcm: hcmRoom };
 
-export function roomSVG(cityId) {
+/** The room as stacked 3D layers (HTML), ready for the camera to mount. */
+export function roomScene(cityId) {
   const draw = ROOMS[cityId];
   if (!draw) throw new Error(`no room artwork for ${cityId}`);
   return draw();

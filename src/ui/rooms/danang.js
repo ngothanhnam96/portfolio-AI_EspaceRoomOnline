@@ -2,7 +2,7 @@
 // golden Dragon Bridge arches over the water (and breathes fire when you escape),
 // with the Sơn Trà ridge and city lights beyond.
 
-import { door, glow, hot, stars, svgRoom } from "./kit.js";
+import { door, glow, hot, plant, scene, stars } from "./kit.js";
 
 const P = "dn";
 const SANS = "Segoe UI, system-ui, sans-serif";
@@ -35,28 +35,28 @@ const defs = `
   <pattern id="${P}-carpet" width="60" height="40" patternUnits="userSpaceOnUse">
     <rect width="60" height="40" fill="#2a2f4a"/><path d="M30 4 L52 20 L30 36 L8 20 Z" fill="none" stroke="#3a4166" stroke-width="2"/>
   </pattern>
-  <clipPath id="${P}-view"><rect x="372" y="100" width="716" height="530"/></clipPath>`;
+  <clipPath id="${P}-view"><rect x="180" y="0" width="1100" height="720"/></clipPath>`;
 
 // The dragon's body: a run of arches resting on the bridge deck.
 const BODY = "M470 452 C 500 452 510 380 560 380 C 610 380 620 452 660 452 C 700 452 710 372 760 372 C 810 372 820 452 860 452 C 900 452 910 386 955 386 C 1000 386 1010 452 1046 450 C 1066 448 1080 430 1072 414 C 1064 400 1046 410 1054 424";
 
 const night = `
   <g clip-path="url(#${P}-view)">
-    <rect x="372" y="100" width="716" height="530" fill="url(#${P}-sky)"/>
-    ${stars(372, 100, 716, 230, 70, 9)}
+    <rect x="180" y="0" width="1100" height="720" fill="url(#${P}-sky)"/>
+    ${stars(180, 0, 1100, 340, 120, 9)}
     <circle cx="980" cy="160" r="20" fill="#f6f1d5"/><circle cx="988" cy="154" r="18" fill="#0f1a40"/>
     <path d="M840 430 Q 920 330 1000 360 Q 1050 340 1088 380 L1088 440 L 840 440 Z" fill="#141f3d"/>
-    <g fill="#0f1730">
+    <g fill="#0f1730"><rect x="250" y="392" width="56" height="58"/><rect x="310" y="372" width="40" height="78"/><rect x="1100" y="404" width="60" height="46"/><rect x="1160" y="384" width="50" height="66"/>
       ${[[372, 400, 40, 50], [412, 380, 30, 70], [446, 410, 46, 40], [496, 370, 34, 80], [534, 398, 52, 52], [592, 386, 30, 64], [626, 404, 60, 46], [690, 376, 36, 74], [730, 396, 50, 54], [784, 384, 40, 66]].map(([x, y, w, h]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}"/>`).join("")}
     </g>
     <g fill="#ffd98a">${Array.from({ length: 46 }, (_, i) => `<rect x="${380 + ((i * 37) % 440)}" y="${388 + ((i * 23) % 56)}" width="5" height="6" opacity="${0.4 + ((i * 7) % 6) / 10}"/>`).join("")}</g>
-    <rect x="372" y="448" width="716" height="182" fill="url(#${P}-river)"/>
+    <rect x="180" y="448" width="1100" height="272" fill="url(#${P}-river)"/>
     <g opacity="0.7" stroke-linecap="round">
       ${[[420, "#ffd27a"], [520, "#ff7ab6"], [610, "#ffd27a"], [700, "#7ad7ff"], [780, "#ffd27a"], [900, "#b98bff"], [990, "#ffd27a"]].map(([x, c], i) => `<line class="ripple" style="animation-delay:${i * 0.3}s" x1="${x}" y1="${490 + (i % 3) * 18}" x2="${x}" y2="${560 + (i % 2) * 40}" stroke="${c}" stroke-width="4" stroke-dasharray="6 9"/>`).join("")}
     </g>
     <g>
-      <rect x="372" y="456" width="716" height="14" fill="#2b3554"/>
-      <rect x="372" y="454" width="716" height="4" fill="#ffd98a" opacity="0.6"/>
+      <rect x="180" y="456" width="1100" height="14" fill="#2b3554"/>
+      <rect x="180" y="454" width="1100" height="4" fill="#ffd98a" opacity="0.6"/>
       ${[440, 547, 727, 903, 999].map((x) => `<rect x="${x - 7}" y="470" width="14" height="60" fill="#2b3554"/>`).join("")}
       <g class="dragon" transform="translate(430 0) scale(0.9 1) translate(-384 0)">
       <path d="${BODY}" fill="none" stroke="#7a4d10" stroke-width="20" stroke-linecap="round"/>
@@ -184,9 +184,7 @@ const tray = hot("tray", "Khay đồ ăn khuya", `
     <path d="M846 704 l18 -30 M852 706 l18 -30" stroke="#8a6440" stroke-width="3" stroke-linecap="round"/>
   </g>`, [760, 650]);
 
-const hotelDoor = door("Cửa phòng có khóa chữ điện tử — lối ra", `
-  <rect x="1316" y="140" width="216" height="570" fill="#11151f"/>
-  <rect class="door-light" x="1328" y="152" width="192" height="558" fill="#fff1c9"/>
+const doorLeaf = `
   <g class="door-leaf">
     <rect x="1328" y="152" width="192" height="558" fill="url(#${P}-veneer)"/>
     ${Array.from({ length: 9 }, (_, i) => `<line x1="${1340 + i * 21}" y1="156" x2="${1342 + i * 21}" y2="706" stroke="#a87a4e" stroke-width="1.5" opacity="0.5"/>`).join("")}
@@ -200,26 +198,31 @@ const hotelDoor = door("Cửa phòng có khóa chữ điện tử — lối ra",
       <path d="M0 0 h28 v64 q -14 8 -28 0 Z" fill="#c0392b"/><circle cx="14" cy="10" r="7" fill="none" stroke="#fff" stroke-width="3"/>
       <path d="M6 30 h16 M6 38 h12 M6 46 h16" stroke="#fff" stroke-width="2.5"/>
     </g>
-  </g>`, [1424, 128]);
+  </g>`;
+
+const hotelDoor = door("Cửa phòng có khóa chữ điện tử — lối ra", `
+  <rect x="1316" y="140" width="216" height="570" fill="#11151f"/>
+  <rect class="door-light" x="1328" y="152" width="192" height="558" fill="#fff1c9"/>
+  `, [1424, 128]);
 
 export default function danangRoom() {
-  return svgRoom(P, "Phòng khách sạn bên sông Hàn, Đà Nẵng", defs, `
-    <rect width="1600" height="900" fill="url(#${P}-wall)"/>
-    <rect width="1600" height="56" fill="#141b2c"/>
-    ${[200, 520, 1080, 1400].map((x) => `<circle cx="${x}" cy="56" r="6" fill="#fff3c9"/>${glow(P, x, 80, 70, "#ffe2a0", 0.25)}`).join("")}
-    ${Array.from({ length: 14 }, (_, i) => `<rect x="${i * 24}" y="56" width="16" height="644" fill="#2b3a5a" opacity="0.6"/>`).join("")}
-    <rect y="700" width="1600" height="200" fill="url(#${P}-carpet)"/>
-    <rect y="692" width="1600" height="10" fill="#141b2c"/>
-    ${night}
-    ${windowFrame}
-    ${brochure}
-    ${desk}
-    ${mountains}
-    ${plaque}
-    ${sideTable}
-    ${postcard}
-    ${frames}
-    ${tray}
-    ${hotelDoor}
-  `);
+  return scene(P, "Phòng khách sạn bên sông Hàn, Đà Nẵng", defs, {
+    hole: { x: 372, y: 100, w: 716, h: 530 },
+    far: night,
+    wall: `
+      <rect x="-600" y="-500" width="2800" height="1900" fill="#283a5c"/>
+      <rect x="-600" y="-500" width="2800" height="556" fill="#141b2c"/>
+      <rect x="-600" y="700" width="2800" height="700" fill="url(#${P}-carpet)"/>
+      <rect width="1600" height="900" fill="url(#${P}-wall)"/>
+      <rect width="1600" height="56" fill="#141b2c"/>
+      ${Array.from({ length: 14 }, (_, i) => `<rect x="${i * 24}" y="56" width="16" height="644" fill="#2b3a5a" opacity="0.6"/>`).join("")}
+      <rect y="700" width="1600" height="200" fill="url(#${P}-carpet)"/>
+      <rect x="-600" y="692" width="2800" height="10" fill="#141b2c"/>`,
+    back: `
+      ${[200, 520, 1080, 1400].map((x) => `<circle cx="${x}" cy="56" r="6" fill="#fff3c9"/>${glow(P, x, 80, 70, "#ffe2a0", 0.25)}`).join("")}
+      ${windowFrame}${brochure}${desk}${mountains}${plaque}${sideTable}${postcard}${frames}${hotelDoor}`,
+    mid: tray,
+    front: plant(70, 960, 1.3, { pot: "#3a2f4a", leaf: "#1f4a3a", vein: "#2f6a52" }),
+    door: { x: 1328, y: 152, w: 192, h: 558, motion: "swing", hinge: "left", art: doorLeaf },
+  });
 }

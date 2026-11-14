@@ -12,5 +12,6 @@
 | T-08 | Clock, penalties, pause, saving and resuming a room | ✅ |
 | T-09 | Sound, keyboard play, phone layout, reduced motion | ✅ |
 | T-10 | Tests (55), docs, CI, Pages | ✅ |
+| T-13 | 2.5D: depth layers, camera (parallax, tilt, glide-in, focus dolly), 3D door swing, torchlight, tilt cards and map, 3D tiles | ✅ |
 | T-11 | Next: Huế, Hội An, Đà Lạt, Hạ Long, Sa Pa, Cần Thơ (see 06-ADD-A-CITY) | ⏳ |
 | T-12 | Next: question pools so a replay gets different questions; an English version; an online leaderboard | ⏳ |

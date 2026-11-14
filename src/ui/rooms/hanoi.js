@@ -1,7 +1,7 @@
 // Hà Nội — an Old Quarter attic: ochre walls, green louvred shutters open on
 // Hoàn Kiếm Lake at dusk (Turtle Tower, the red Thê Húc bridge), Bát Tràng tiles.
 
-import { books, door, glow, hot, perspectiveFloor, svgRoom } from "./kit.js";
+import { books, door, glow, hot, lantern, perspectiveFloor, plant, scene } from "./kit.js";
 
 const P = "hn";
 
@@ -28,7 +28,7 @@ const defs = `
   <linearGradient id="${P}-chalk" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0" stop-color="#34463c"/><stop offset="1" stop-color="#25322b"/>
   </linearGradient>
-  <clipPath id="${P}-view"><rect x="440" y="170" width="340" height="372"/></clipPath>`;
+  <clipPath id="${P}-view"><rect x="250" y="60" width="720" height="600"/></clipPath>`;
 
 function louvres(x, y, w, h) {
   let out = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="url(#${P}-shutter)" stroke="#1f4532" stroke-width="4"/>`;
@@ -40,12 +40,14 @@ function louvres(x, y, w, h) {
 
 const windowView = `
   <g clip-path="url(#${P}-view)">
-    <rect x="440" y="170" width="340" height="372" fill="url(#${P}-sky)"/>
+    <rect x="250" y="60" width="720" height="600" fill="url(#${P}-sky)"/>
     <circle cx="730" cy="222" r="15" fill="#fff4c9"/>
     <circle cx="730" cy="222" r="34" fill="#fff4c9" opacity="0.18"/>
+    <rect x="250" y="404" width="720" height="30" fill="#26413b"/>
     <path d="M440 420 Q 460 392 482 404 Q 500 380 526 398 Q 548 384 566 402 Q 600 386 630 404 Q 660 380 690 400 Q 720 388 748 404 Q 766 392 780 400 L 780 430 L 440 430 Z" fill="#26413b"/>
     <g fill="#ffd27a">${[470, 520, 575, 640, 700, 755].map((x) => `<circle cx="${x}" cy="418" r="2.6"/>`).join("")}</g>
-    <rect x="440" y="426" width="340" height="120" fill="url(#${P}-lake)"/>
+    <rect x="250" y="426" width="720" height="234" fill="url(#${P}-lake)"/>
+    <ellipse cx="420" cy="456" rx="40" ry="8" fill="#26413b"/>
     <g stroke="#ffd9a0" stroke-width="2" opacity="0.45">
       <line x1="470" y1="450" x2="520" y2="450"/><line x1="560" y1="490" x2="640" y2="490"/><line x1="680" y1="470" x2="740" y2="470"/><line x1="500" y1="515" x2="560" y2="515"/>
     </g>
@@ -185,11 +187,7 @@ const menu = hot("menu", "Bảng thực đơn viết phấn", `
     <path d="M254 720 q 8 -12 16 0" fill="none" stroke="#ffd27a" stroke-width="2.5"/>
   </g>`, [300, 530]);
 
-const exitDoor = door("Cánh cửa gỗ khóa chữ — lối ra", `
-  <rect x="1236" y="150" width="244" height="550" fill="#3a2414"/>
-  <path d="M1246 160 h224 v54 h-224 Z" fill="#2b190d"/>
-  <g stroke="#c9973f" stroke-width="3" fill="none" opacity="0.8">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<line x1="1358" y1="212" x2="${1262 + i * 32}" y2="166"/>`).join("")}</g>
-  <rect class="door-light" x="1254" y="216" width="208" height="484" fill="#fff3c9"/>
+const doorLeaf = `
   <g class="door-leaf">
     <rect x="1254" y="216" width="208" height="484" fill="url(#${P}-wood)"/>
     ${[[1270, 232], [1362, 232], [1270, 380], [1362, 380], [1270, 540], [1362, 540]].map(([x, y]) => `<rect x="${x}" y="${y}" width="84" height="${y === 380 ? 144 : y === 540 ? 140 : 132}" rx="4" fill="#5c3720" stroke="#2b190d" stroke-width="4"/>`).join("")}
@@ -198,7 +196,14 @@ const exitDoor = door("Cánh cửa gỗ khóa chữ — lối ra", `
       ${[0, 1, 2, 3, 4].map((i) => `<rect x="${i * 17}" y="-14" width="14" height="28" rx="3" fill="url(#${P}-brass)"/>`).join("")}
     </g>
     <circle cx="1440" cy="466" r="11" fill="url(#${P}-brass)"/>
-  </g>
+  </g>`;
+
+const exitDoor = door("Cánh cửa gỗ khóa chữ — lối ra", `
+  <rect x="1236" y="150" width="244" height="550" fill="#3a2414"/>
+  <path d="M1246 160 h224 v54 h-224 Z" fill="#2b190d"/>
+  <g stroke="#c9973f" stroke-width="3" fill="none" opacity="0.8">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<line x1="1358" y1="212" x2="${1262 + i * 32}" y2="166"/>`).join("")}</g>
+  <rect class="door-light" x="1254" y="216" width="208" height="484" fill="#fff3c9"/>
+  
   <rect x="1310" y="120" width="96" height="26" rx="5" fill="#2b190d"/>
   <text x="1358" y="139" font-size="16" font-weight="700" text-anchor="middle" fill="#ffd27a" font-family="Segoe UI, system-ui, sans-serif">LỐI RA</text>`, [1358, 112]);
 
@@ -211,24 +216,25 @@ const clock = `
   </g>`;
 
 export default function hanoiRoom() {
-  return svgRoom(P, "Căn gác phố cổ Hà Nội", defs, `
-    <rect width="1600" height="900" fill="url(#${P}-wall)"/>
-    <rect width="1600" height="700" fill="url(#${P}-stripes)"/>
-    <rect width="1600" height="46" fill="url(#${P}-wood)"/>
-    ${[160, 560, 960, 1360].map((x) => `<rect x="${x}" y="0" width="34" height="58" fill="#4f2e1a"/>`).join("")}
-    ${perspectiveFloor({ top: 700, colors: ["#b5533a", "#9c4430"], lines: "#5e2516" })}
-    <rect x="0" y="682" width="1600" height="20" fill="#5d371f"/>
-    ${windowView}
-    ${windowFrame}
-    ${lamp}
-    ${clock}
-    ${scroll}
-    ${shelf}
-    ${table}
-    ${steles}
-    ${menu}
-    ${turtle}
-    ${exitDoor}
-    <g class="motes">${[[300, 260], [520, 620], [900, 300], [1100, 560], [760, 420], [1300, 300]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="2.2" fill="#fff5d6" style="animation-delay:${i * 1.1}s"/>`).join("")}</g>
-  `);
+  return scene(P, "Căn gác phố cổ Hà Nội", defs, {
+    hole: { x: 440, y: 170, w: 340, h: 372 },
+    far: windowView,
+    wall: `
+      <rect x="-600" y="-500" width="2800" height="1900" fill="#d29c48"/>
+      <rect x="-600" y="-500" width="2800" height="546" fill="#4f2e1a"/>
+      <rect x="-600" y="700" width="2800" height="700" fill="#9c4430"/>
+      <rect width="1600" height="900" fill="url(#${P}-wall)"/>
+      <rect width="1600" height="700" fill="url(#${P}-stripes)"/>
+      <rect width="1600" height="46" fill="url(#${P}-wood)"/>
+      ${[160, 560, 960, 1360].map((x) => `<rect x="${x}" y="0" width="34" height="58" fill="#4f2e1a"/>`).join("")}
+      ${perspectiveFloor({ top: 700, colors: ["#b5533a", "#9c4430"], lines: "#5e2516" })}
+      <rect x="-600" y="682" width="2800" height="20" fill="#5d371f"/>`,
+    back: `${windowFrame}${lamp}${clock}${scroll}${shelf}${turtle}${exitDoor}`,
+    mid: `${table}${steles}${menu}`,
+    front: `
+      ${lantern(120, 120, 1.25)}
+      ${plant(1560, 940, 1.2, { pot: "#7a3b22", leaf: "#2b5a33", vein: "#3f7f4a" })}
+      <g class="motes">${[[300, 260], [520, 620], [900, 300], [1100, 560], [760, 420], [1300, 300]].map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="3" fill="#fff5d6" style="animation-delay:${i * 1.1}s"/>`).join("")}</g>`,
+    door: { x: 1254, y: 216, w: 208, h: 484, motion: "swing", hinge: "left", art: doorLeaf },
+  });
 }

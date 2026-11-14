@@ -10,14 +10,19 @@ import {
 import { clock } from "./core/text.js";
 import { initAnalytics, track } from "./ui/analytics.js";
 import { createAudio } from "./ui/audio.js";
+import { createCamera } from "./ui/camera.js";
 import { mapSVG } from "./ui/map.js";
 import { PAIR_COLORS, TYPE_LABEL, act, draftAnswer, newDraft, puzzleHTML, ready } from "./ui/puzzles.js";
 import { esc } from "./ui/rooms/kit.js";
-import { roomSVG } from "./ui/rooms/index.js";
+import { roomScene } from "./ui/rooms/index.js";
 import { load, save } from "./ui/storage.js";
 
 const $ = (id) => document.getElementById(id);
 const audio = createAudio();
+const camera = createCamera();
+/** How long the camera glides toward an object before its card opens. */
+const GLIDE_MS = camera.reduced ? 0 : 420;
+let gliding = false;
 const ids = CITIES.map((c) => c.id);
 
 let progress = restoreProgress(load("progress", null), ids);
@@ -55,6 +60,7 @@ function openModal(html, kind) {
 }
 
 function closeModal() {
+  camera.release();
   $("modal").hidden = true;
   $("sheet").innerHTML = "";
   quest = null;
@@ -82,7 +88,7 @@ function renderHome() {
 
   $("city-list").innerHTML = CITIES.map((c, i) => {
     const mine = progress.cities[c.id];
-    return `<li><button class="city-card" data-city="${c.id}" style="--accent:${c.theme.accent}">
+    return `<li><button class="city-card tilt" data-tilt="7" data-city="${c.id}" style="--accent:${c.theme.accent}">
       <span class="city-no">0${i + 1}</span>
       <span class="city-main">
         <span class="city-region">${esc(c.region)}</span>
@@ -148,7 +154,8 @@ function enterRoom(c, resumeFrom = null) {
   $("room-city").textContent = c.name;
   $("room-name").textContent = c.room;
   $("screen-room").style.setProperty("--accent", c.theme.accent);
-  $("stage").innerHTML = roomSVG(c.id);
+  camera.mount($("stage"), roomScene(c.id));
+  camera.askForTilt();
   $("stage").classList.remove("escaped", "torch");
   $("confetti").innerHTML = "";
   show("room");
@@ -231,8 +238,25 @@ function resume() {
 
 /* ------------------------------------------------------------------ quests */
 
+/** Glide the camera to a room object, then run `then` (the card opens on arrival). */
+function glideTo(element, then, zoom) {
+  if (gliding) return;
+  camera.focusOn(element, zoom);
+  if (!GLIDE_MS || !element) { then(); return; }
+  gliding = true;
+  setTimeout(() => {
+    gliding = false;
+    if (run?.status === "playing") then();
+    else camera.release();
+  }, GLIDE_MS);
+}
+
 function openQuest(id) {
-  if (!run || run.status !== "playing") return;
+  if (!run || run.status !== "playing" || gliding) return;
+  glideTo($("stage").querySelector(`.hot[data-quest="${id}"]`), () => showQuest(id));
+}
+
+function showQuest(id) {
   const q = questById(city, id);
   audio.open();
   if (isSolved(run, id)) {
@@ -335,7 +359,11 @@ function useHint() {
 /* -------------------------------------------------------------------- door */
 
 function openDoor() {
-  if (!run || run.status !== "playing") return;
+  if (!run || run.status !== "playing" || gliding) return;
+  glideTo($("stage").querySelector(".hot.door"), showDoor, 220);
+}
+
+function showDoor() {
   if (!doorReady(run, city)) {
     audio.wrong();
     const left = city.quests.length - solvedCount(run);
@@ -417,6 +445,7 @@ function escape() {
   persistRun();
   audio.door();
   $("stage").classList.add("escaped");
+  camera.focusOn($("stage").querySelector(".hot.door"), 160);
   burstConfetti();
   const result = summary(run, city);
   const out = recordResult(progress, city.id, { escaped: true, seconds: result.seconds, stars: result.stars });
@@ -486,6 +515,8 @@ function goHome() {
   city = null;
   run = null;
   pausedAt = null;
+  camera.unmount();
+  $("stage").innerHTML = "";
   show("home");
   renderHome();
 }
@@ -609,6 +640,29 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("pagehide", () => persistRun());
 
+/* --------------------------------------------------------------- 3D tilt */
+
+// Cards and the map lean toward the pointer, like objects on a table.
+document.addEventListener("pointermove", (event) => {
+  const el = event.target.closest?.(".tilt");
+  if (!el || camera.reduced) return;
+  const box = el.getBoundingClientRect();
+  const x = (event.clientX - box.left) / box.width - 0.5;
+  const y = (event.clientY - box.top) / box.height - 0.5;
+  const max = Number(el.dataset.tilt ?? 8);
+  el.style.setProperty("--ry", `${(x * max).toFixed(2)}deg`);
+  el.style.setProperty("--rx", `${(-y * max).toFixed(2)}deg`);
+  el.style.setProperty("--gx", `${((x + 0.5) * 100).toFixed(1)}%`);
+  el.style.setProperty("--gy", `${((y + 0.5) * 100).toFixed(1)}%`);
+});
+document.addEventListener("pointerout", (event) => {
+  const el = event.target.closest?.(".tilt");
+  if (el && !el.contains(event.relatedTarget)) {
+    el.style.removeProperty("--rx");
+    el.style.removeProperty("--ry");
+  }
+});
+
 /* ------------------------------------------------------------------- start */
 
 audio.set(load("sound", true) !== false);
@@ -626,7 +680,7 @@ if (new URLSearchParams(location.search).has("debug")) {
     get progress() { return progress; },
     /** Solve one quest with its real answer, through the same path as a player. */
     solve(id) {
-      openQuest(id);
+      showQuest(id);
       const q = questById(city, id);
       run = attempt(run, city, id, solutionOf(q), now()).run;
       closeModal();

@@ -2,7 +2,7 @@
 // balcony over the sunset skyline (Landmark 81, Bitexco, the Saigon River),
 // a red plastic stool, and a folding iron gate (cửa xếp) as the way out.
 
-import { door, glow, hot, svgRoom } from "./kit.js";
+import { door, glow, hot, plant, scene } from "./kit.js";
 
 const P = "sg";
 const SANS = "Segoe UI, system-ui, sans-serif";
@@ -30,7 +30,7 @@ const defs = `
     <path d="M0 0 h14 a14 14 0 0 1 -14 14 Z M72 0 v14 a14 14 0 0 1 -14 -14 Z M0 72 v-14 a14 14 0 0 1 14 14 Z M72 72 h-14 a14 14 0 0 1 14 -14 Z" fill="#2a7f77"/>
     <rect width="72" height="72" fill="none" stroke="#d8c9a8" stroke-width="2"/>
   </pattern>
-  <clipPath id="${P}-view"><rect x="520" y="130" width="500" height="490"/></clipPath>`;
+  <clipPath id="${P}-view"><rect x="360" y="20" width="820" height="660"/></clipPath>`;
 
 function windows(x, y, w, h, seed) {
   let s = seed;
@@ -46,11 +46,15 @@ function windows(x, y, w, h, seed) {
 
 const skyline = `
   <g clip-path="url(#${P}-view)">
-    <rect x="520" y="130" width="500" height="490" fill="url(#${P}-sky)"/>
+    <rect x="360" y="20" width="820" height="660" fill="url(#${P}-sky)"/>
     <circle cx="610" cy="470" r="46" fill="#ffd27a" opacity="0.9"/>
     <circle cx="610" cy="470" r="90" fill="#ffd27a" opacity="0.18"/>
     <g fill="#5b4880" opacity="0.6">
       <rect x="520" y="430" width="60" height="160"/><rect x="700" y="450" width="70" height="140"/><rect x="960" y="420" width="60" height="170"/>
+    </g>
+    <g fill="#3d3566">
+      <rect x="372" y="452" width="66" height="140"/><rect x="444" y="492" width="62" height="100"/>
+      <rect x="1030" y="440" width="58" height="150"/><rect x="1094" y="474" width="78" height="118"/>
     </g>
     <g>
       <rect x="560" y="470" width="54" height="120" fill="#3d3566"/>${windows(560, 470, 54, 120, 7)}
@@ -74,7 +78,7 @@ const skyline = `
       <g stroke="#9fb3e0" stroke-width="2" opacity="0.5"><line x1="884" y1="300" x2="884" y2="590"/><line x1="900" y1="236" x2="900" y2="590"/><line x1="916" y1="300" x2="916" y2="590"/></g>
       ${windows(868, 320, 64, 260, 57)}
     </g>
-    <rect x="520" y="588" width="500" height="40" fill="url(#${P}-river)"/>
+    <rect x="360" y="588" width="820" height="92" fill="url(#${P}-river)"/>
     <g stroke="#ffe0a8" stroke-width="2" opacity="0.6"><line x1="560" y1="600" x2="620" y2="600"/><line x1="660" y1="612" x2="700" y2="612"/><line x1="860" y1="604" x2="940" y2="604"/></g>
     <path d="M780 604 h40 l-6 8 h-28 Z" fill="#2b2240"/><rect x="792" y="596" width="12" height="8" fill="#2b2240"/>
     <g class="celebrate">
@@ -97,7 +101,6 @@ function railing() {
 }
 
 const balcony = `
-  ${skyline}
   ${railing()}
   <rect x="502" y="112" width="536" height="526" fill="none" stroke="#f4efe2" stroke-width="22"/>
   <line x1="770" y1="120" x2="770" y2="520" stroke="#f4efe2" stroke-width="10"/>
@@ -189,11 +192,7 @@ const table = `
     <rect x="760" y="724" width="20" height="90" fill="#5d371f"/>
     <ellipse cx="770" cy="816" rx="70" ry="12" fill="#4a2c18"/>
   </g>
-  <g transform="translate(1010 760)" filter="url(#${P}-shadow)">
-    <path d="M-44 -30 L44 -30 L52 60 L36 60 L30 6 L-30 6 L-36 60 L-52 60 Z" fill="#d63031"/>
-    <ellipse cx="0" cy="-30" rx="46" ry="12" fill="#ff4d4d"/>
-    <ellipse cx="0" cy="-30" rx="12" ry="4" fill="#b02020"/>
-  </g>`;
+`;
 
 const fan = `
   <line x1="800" y1="0" x2="800" y2="54" stroke="#ddd" stroke-width="6"/>
@@ -202,10 +201,14 @@ const fan = `
   </g>
   <circle cx="800" cy="60" r="14" fill="#cfcfcf"/>`;
 
-const gate = door("Cửa xếp khóa chữ — lối ra", `
-  <rect x="1300" y="150" width="240" height="560" fill="#ece4d2"/>
-  <rect class="door-light" x="1318" y="168" width="204" height="542" fill="#fff1c9"/>
-  <rect x="1318" y="168" width="204" height="542" fill="#1c2029" class="door-dark"/>
+const stool = `
+  <g transform="translate(1010 760)" filter="url(#${P}-shadow)">
+    <path d="M-44 -30 L44 -30 L52 60 L36 60 L30 6 L-30 6 L-36 60 L-52 60 Z" fill="#d63031"/>
+    <ellipse cx="0" cy="-30" rx="46" ry="12" fill="#ff4d4d"/>
+    <ellipse cx="0" cy="-30" rx="12" ry="4" fill="#b02020"/>
+  </g>`;
+
+const gateLeaf = `
   <g class="door-leaf door-fold">
     ${Array.from({ length: 6 }, (_, i) => `<path d="M${1324 + i * 40} 176 l40 66 l-40 66 l40 66 l-40 66 l40 66 l-40 66 l40 66 l-40 66" stroke="#8d96a3" stroke-width="3" fill="none"/>`).join("")}
     ${Array.from({ length: 11 }, (_, i) => `<rect x="${1320 + i * 20}" y="170" width="6" height="538" rx="2" fill="#b9c1cb"/>`).join("")}
@@ -215,29 +218,35 @@ const gate = door("Cửa xếp khóa chữ — lối ra", `
       <rect x="-38" y="-18" width="76" height="52" rx="8" fill="url(#${P}-brass)"/>
       ${[0, 1, 2, 3, 4, 5].map((i) => `<rect x="${-33 + i * 11.5}" y="-6" width="9" height="26" rx="2" fill="#3a2508"/>`).join("")}
     </g>
-  </g>
+  </g>`;
+
+const gate = door("Cửa xếp khóa chữ — lối ra", `
+  <rect x="1300" y="150" width="240" height="560" fill="#ece4d2"/>
+  <rect class="door-light" x="1318" y="168" width="204" height="542" fill="#fff1c9"/>
+  <rect x="1318" y="168" width="204" height="542" fill="#1c2029" class="door-dark"/>
+  
   <rect x="1292" y="142" width="256" height="16" fill="#d8ceb8"/>`, [1420, 132]);
 
 export default function hcmRoom() {
-  return svgRoom(P, "Căn hộ chung cư cũ ở Sài Gòn", defs, `
-    <rect width="1600" height="900" fill="url(#${P}-wall)"/>
-    <rect y="0" width="1600" height="40" fill="#f4efe2"/>
-    <rect y="520" width="1600" height="180" fill="#6fb1a2"/>
-    <rect y="514" width="1600" height="8" fill="#f4efe2"/>
-    <rect y="700" width="1600" height="200" fill="url(#${P}-tile)"/>
-    <rect y="700" width="1600" height="200" fill="url(#${P}-floorfade)"/>
-    <rect y="692" width="1600" height="10" fill="#4f8a7d"/>
-    ${glow(P, 770, 380, 260, "#ffb37a", 0.35)}
-    ${balcony}
-    ${binoculars}
-    ${fan}
-    ${map}
-    ${cabinet}
-    ${radio}
-    ${corkboard}
-    ${cart}
-    ${table}
-    ${coffee}
-    ${gate}
-  `);
+  return scene(P, "Căn hộ chung cư cũ ở Sài Gòn", defs, {
+    hole: { x: 520, y: 130, w: 500, h: 490 },
+    far: skyline,
+    wall: `
+      <rect x="-600" y="-500" width="2800" height="1900" fill="#97cfc1"/>
+      <rect x="-600" y="-500" width="2800" height="540" fill="#f4efe2"/>
+      <rect x="-600" y="520" width="2800" height="180" fill="#6fb1a2"/>
+      <rect x="-600" y="514" width="2800" height="8" fill="#f4efe2"/>
+      <rect x="-600" y="700" width="2800" height="700" fill="url(#${P}-tile)"/>
+      <rect width="1600" height="900" fill="url(#${P}-wall)"/>
+      <rect y="0" width="1600" height="40" fill="#f4efe2"/>
+      <rect y="520" width="1600" height="180" fill="#6fb1a2"/>
+      <rect y="514" width="1600" height="8" fill="#f4efe2"/>
+      <rect y="700" width="1600" height="200" fill="url(#${P}-tile)"/>
+      <rect y="700" width="1600" height="200" fill="url(#${P}-floorfade)"/>
+      <rect x="-600" y="692" width="2800" height="10" fill="#4f8a7d"/>`,
+    back: `${glow(P, 770, 380, 260, "#ffb37a", 0.35)}${balcony}${binoculars}${fan}${map}${cabinet}${radio}${corkboard}${cart}${gate}`,
+    mid: `${table}${coffee}`,
+    front: `${stool}${plant(60, 960, 1.25, { pot: "#c8553d", leaf: "#2f7a4a", vein: "#57a86b" })}`,
+    door: { x: 1318, y: 166, w: 204, h: 544, motion: "fold", hinge: "right", art: gateLeaf },
+  });
 }

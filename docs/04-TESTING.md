@@ -1,6 +1,6 @@
 # 04 · Testing
 
-`npm test` runs `node --test`: 55 tests in under a second, no dependencies.
+`npm test` runs `node --test`: 61 tests in under a second, no dependencies.
 
 | Suite | What it proves |
 |-------|----------------|
@@ -9,7 +9,8 @@
 | `run.test.js` | Letters given once, wrong-answer and hint penalties, hints in order and paid once, door rules, folding at the door, clock stops at escape, timeout (including through penalties alone), stars, summary, no mutation, every city escapable with ★★★ |
 | `content.test.js` | Validator passes on every city; 3 cities north to south; 5–6 quests that spell the city; at least 5 puzzle types per room and all 6 across the game; distractors really wrong; difficulty climbs; the validator catches 9 kinds of mistake |
 | `puzzles.test.js` | Every puzzle in the game solved by clicking its widget for 3 shuffles; every card renders well-formed markup; no empty submits; order and match never open solved; dials wrap; arrows stop at the ends; match select and unpair behaviour; typed text escaped |
-| `art.test.js` | Rooms ⇄ cities; every room is well-formed with unique, prefixed ids and no broken `url(#…)`; one object per quest plus one door, keyboard-reachable; escape scenes; rooms differ; map well-formed, every pin on land and on the map, islands offshore |
+| `art.test.js` | Rooms ⇄ cities; four depth layers in order, each scaled to line up at rest; wall hole applied and the window view painted ≥ 150 px past the glass; well-formed, unique prefixed ids, no broken `url(#…)`; one object per quest plus one door whose leaf sits exactly over its frame; escape scenes; blurred foreground holds no puzzle; rooms differ; map well-formed, every pin on land, islands offshore |
+| `camera.test.js` | Fit scale for any box, focus pose pulls toward the object and dollies in, glides stay gentle |
 | `progress.test.js` | Escapes and timeouts recorded; stars and best time only improve; junk saves cleaned; titles |
 
 ## Browser playthrough
@@ -26,6 +27,7 @@ Headless Edge over the DevTools protocol, driven only through clicks on the real
 | TP. HCM: match card, pause and resume, clock forced to zero | ✅ timeout card, clock 00:00 |
 | Phone 390 × 844: home, room with notebook below, puzzle as a bottom sheet | ✅ |
 | Reload: stars kept, "Chơi tiếp" offered for the unfinished room | ✅ |
+| 3D: glide-in on entering, parallax looking left and up-right, glide to the scroll before its card, door swinging open, Đà Nẵng door + dragon fire | ✅ |
 | Console errors | none |
 
 ## Bugs the playthrough found

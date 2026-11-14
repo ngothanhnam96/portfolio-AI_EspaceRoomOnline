@@ -13,6 +13,7 @@ src/core/           pure logic: no DOM, deterministic, fully tested
   text.js       Vietnamese-friendly matching (fold), seeded shuffles, mm:ss
 src/ui/
   rooms/        one SVG room per city + shared kit (hotspots, defs, floors, books…)
+  camera.js     the 2.5D camera: parallax, idle sway, glide-in, focus dolly
   map.js        Việt Nam outline, islands, city pins, point-in-polygon check
   puzzles.js    puzzle widgets as pure "draft" state + HTML (testable in Node)
   audio.js      synthesised sounds
@@ -78,6 +79,39 @@ Each room is one SVG in a 1600 × 900 box, built from strings:
 | Hà Nội | Dusk over Hồ Gươm: Tháp Rùa with reflection, red Thê Húc bridge, street lights | Ochre walls, louvred green shutters, Bát Tràng-red tiles, calligraphy scroll, chalk menu |
 | Đà Nẵng | Night: golden Dragon Bridge over the Hàn, Sơn Trà ridge, coloured reflections | Hotel door 1013 with keypad and a do-not-disturb hanger, marble-mountain model, room-service cart |
 | TP. HCM | Sunset: Landmark 81, Bitexco with helipad, Saigon River, iron balcony railing | Gạch bông tiles, radio, cork board, phin coffee, red plastic stool, folding iron gate |
+
+## 2.5D depth
+
+`scene()` in `rooms/kit.js` turns a room's parts into four layers inside a 1600 × 900 box with
+`perspective: 1500px`:
+
+| Layer | z (px) | Holds |
+|-------|--------|-------|
+| far | −560 | The view outside, painted ≥ 150 px wider than the glass on each side |
+| back | 0 | Wall and floor (with a window-shaped hole cut by an SVG mask), shelves, frames, the door frame |
+| mid | +90 | Free-standing furniture: tables, the chalkboard, the room-service cart (with a soft drop shadow) |
+| front | +230 | Near props (lantern, potted plants, the red stool), blurred for depth of field |
+
+- **Lining up at rest:** each layer is scaled by `(1500 − z) / 1500`, so with the camera at
+  rest every layer lines up exactly with the original drawing.
+- **Parallax:** when the camera turns, nearer layers move more, which is the parallax.
+- **The door:** the leaf is cut out into its own small SVG plane, using the same coordinates
+  through its `viewBox`. On escape it turns `rotateY(−104deg)` on its hinge, or folds up
+  (`scaleX`) for the iron gate.
+- **No dark edges:** the wall and floor extend 600 px past the frame, so turning the camera or
+  a screen that is not 16:9 shows more room instead of a dark band.
+- **Clicks:** layer SVGs ignore the pointer and only the `.hot` objects take clicks, so a
+  front layer never blocks the wall behind it.
+
+`camera.js` eases one rig element toward a target pose every frame:
+
+- **Rest pose:** slightly pushed in, to hide the edges.
+- **Pointer or tilt:** up to ±3.4° of yaw and ±2.2° of pitch.
+- **Idle sway:** a slow drift so the room never looks frozen.
+- **Focus pose:** pulls the object halfway to the centre and moves about 300 px closer.
+
+Opening a puzzle runs the camera glide first (420 ms), then the card. Closing the card releases
+the camera. With `prefers-reduced-motion`, the camera stays still and cards do not tilt.
 
 ## Map
 
