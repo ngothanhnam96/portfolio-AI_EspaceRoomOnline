@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e1320">
+  <meta name="description" content="Mật Thất Ba Miền — trò chơi thoát khỏi phòng kín qua Hà Nội, Đà Nẵng và TP. Hồ Chí Minh. Giải đố, gom chữ, mở cửa trước khi hết giờ.">
+  <title>Mật Thất Ba Miền</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-screen="home">
+  <!-- Home: title, city cards and the map -->
+  <main class="screen home" id="screen-home">
+    <section class="home-left">
+      <div class="brand">
+        <span class="brand-key" aria-hidden="true">🗝️</span>
+        <div>
+          <p class="eyebrow">Escape Room · Giải đố</p>
+          <h1>Mật Thất <em>Ba Miền</em></h1>
+        </div>
+      </div>
+      <p class="lead">Bị khóa trong một căn phòng giữa lòng thành phố. Soi từng đồ vật, giải câu đố, gom đủ chữ cái để mở cánh cửa — trước khi đồng hồ điểm 00:00.</p>
+      <div class="title-strip" id="title-strip"></div>
+      <div class="resume" id="resume" hidden></div>
+      <ol class="city-list" id="city-list"></ol>
+      <p class="soon-note">Sắp ra mắt: Huế, Hội An, Đà Lạt, Hạ Long, Sa Pa, Cần Thơ…</p>
+      <div class="home-actions">
+        <button class="chip" id="how-btn">❓ Cách chơi</button>
+        <button class="chip" id="sound-btn" aria-pressed="true">🔊 Âm thanh</button>
+      </div>
+    </section>
+    <section class="home-map" aria-label="Bản đồ chọn thành phố">
+      <div class="map-wrap" id="map"></div>
+      <p class="map-hint">Chạm vào một thành phố để vào phòng</p>
+    </section>
+  </main>
+
+  <!-- Room -->
+  <main class="screen room" id="screen-room">
+    <header class="room-bar">
+      <button class="icon-btn" id="leave-btn" title="Tạm dừng" aria-label="Tạm dừng">⏸</button>
+      <div class="room-title">
+        <b id="room-city">Hà Nội</b>
+        <span id="room-name">Căn Gác Phố Cổ</span>
+      </div>
+      <div class="timer" id="timer" role="timer" aria-label="Thời gian còn lại"><span aria-hidden="true">⏳</span> <b id="timer-text">15:00</b></div>
+      <div class="progress-pill" id="progress-pill"><span aria-hidden="true">🧩</span> <b id="progress-text">0/5</b></div>
+    </header>
+    <div class="room-body">
+      <div class="stage" id="stage"></div>
+      <aside class="notebook" aria-label="Sổ tay">
+        <div class="note-head">
+          <h2>📒 Sổ tay</h2>
+          <button class="chip small" id="torch-btn" title="Soi đèn: làm sáng các đồ vật còn bí ẩn">🔦 Soi đèn</button>
+        </div>
+        <ul class="clues" id="clues"></ul>
+        <div class="letters-box">
+          <p class="label">Chữ cái thu được</p>
+          <div class="letters" id="letters"></div>
+        </div>
+        <button class="btn primary door-btn" id="door-btn">🚪 Mở cửa</button>
+      </aside>
+    </div>
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+  </main>
+
+  <!-- Modal layer: brief, quests, door lock, pause, result, help -->
+  <section class="modal" id="modal" role="dialog" aria-modal="true" hidden>
+    <div class="sheet" id="sheet"></div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

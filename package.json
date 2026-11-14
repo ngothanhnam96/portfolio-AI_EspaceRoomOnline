@@ -1,0 +1,15 @@
+{
+  "name": "mat-that-ba-mien",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mật Thất Ba Miền - an illustrated escape-room quiz game set in Hà Nội, Đà Nẵng and TP. Hồ Chí Minh.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
